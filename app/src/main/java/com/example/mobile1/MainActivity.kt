@@ -30,7 +30,7 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             Mobile1Theme {
-                TapCounter()
+                NameList()
             }
         }
     }

@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Build
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Button
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -42,19 +44,34 @@ fun TapCounter() {
             fontSize = 30.sp
         )
         Button(onClick = {
-            counter ++
+            counter++
         }) {
             Icon(
-                imageVector = Icons.Default.Build,
+                imageVector = Icons.Default.Add,
                 contentDescription = null,
                 modifier = Modifier
                     .size(16.dp)
             )
             Spacer(
                 modifier = Modifier
-                    .size(16.dp)
+                    .size(8.dp)
             )
             Text(text = "Tap me!")
+        }
+        Button(onClick = {
+            counter = 0
+        }) {
+            Icon(
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(16.dp)
+            )
+            Spacer(
+                modifier = Modifier
+                    .size(8.dp)
+            )
+            Text(text = "Reset counter")
         }
     }
 }

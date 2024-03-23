@@ -166,9 +166,7 @@ fun RegistrationForm(
 
 @Composable
 fun PersonsList() {
-
     var isFormEnabled by remember { mutableStateOf(true) }
-
 
     var persons by remember {
         mutableStateOf(listOf<Person>())

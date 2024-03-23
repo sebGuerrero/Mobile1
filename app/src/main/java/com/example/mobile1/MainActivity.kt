@@ -90,6 +90,7 @@ fun BoxDemo() {
         modifier = Modifier
             .size(400.dp)
     ) {
+        RegistrationForm(addPerson = {})
         Text(
             text = annotatedString,
             color = Color.Blue,

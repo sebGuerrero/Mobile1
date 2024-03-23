@@ -26,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import java.text.Normalizer.Form
 
 @Composable
 fun NameList() {
@@ -43,6 +44,7 @@ fun NameList() {
         modifier = Modifier
             .fillMaxSize()
     ) {
+        FormTimer(duration = 15)
         Row(
             verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier

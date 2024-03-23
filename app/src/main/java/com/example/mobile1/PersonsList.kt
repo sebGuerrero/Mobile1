@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -24,8 +25,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 
 @Composable
 fun PersonsList() {
@@ -44,12 +47,10 @@ fun PersonsList() {
     val context = LocalContext.current
 
     Column(
-        modifier = Modifier
-            .fillMaxSize()
+        modifier = Modifier.fillMaxSize()
     ) {
 
-        TextField(
-            value = name,
+        TextField(value = name,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
@@ -59,38 +60,38 @@ fun PersonsList() {
             })
 
         TextField(
-            value = age,
+            value = age.toString(),
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(16.dp),
             placeholder = { Text("Enter the age") },
             onValueChange = { text ->
                 age = text
-            })
+            },
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Number
+            )
+        )
 
         Button(
-            modifier = Modifier
-                .align(Alignment.CenterHorizontally),
+            modifier = Modifier.align(Alignment.CenterHorizontally),
             onClick = {
+                val intAge = age.toIntOrNull()
+                if (name.isNotBlank() && intAge != null) {
+                    persons = persons + Person(name = name, age = intAge)
 
-            if (name.isNotBlank() && age.isNotBlank()) {
-                persons = persons + Person(name = name, age = age.toInt())
-
-                name = ""
-                age = ""
-            } else {
-                Toast
-                    .makeText(
+                    name = ""
+                    age = ""
+                } else {
+                    Toast.makeText(
                         context,
-                        "Enter a valid name",
+                        "Enter a valid information",
                         Toast.LENGTH_SHORT
-                    )
-                    .show()
-            }
-        }) {
+                    ).show()
+                }
+            }) {
             Icon(
-                imageVector = Icons.Default.Add,
-                contentDescription = "icono de añadir"
+                imageVector = Icons.Default.Add, contentDescription = "icono de añadir"
             )
         }
 
@@ -106,8 +107,7 @@ fun PersonsList() {
                     Spacer(modifier = Modifier.weight(1f))
                     Text(
                         text = currentPerson.age.toString(),
-                        modifier = Modifier
-                            .padding(16.dp)
+                        modifier = Modifier.padding(16.dp)
                     )
                 }
 

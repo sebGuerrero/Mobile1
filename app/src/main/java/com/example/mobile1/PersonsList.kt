@@ -1,6 +1,7 @@
 package com.example.mobile1
 
 import android.widget.Toast
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -37,10 +38,14 @@ import androidx.compose.ui.unit.sp
 import kotlinx.coroutines.delay
 
 @Composable
-fun PersonsList() {
-
+fun FormTimer(
+    duration: Int,
+    onPause: () -> Unit = {},
+    onReset: () -> Unit = {},
+    onComplete : () -> Unit = {}
+) {
     var timeLeft by remember {
-        mutableIntStateOf(10)
+        mutableIntStateOf(duration)
     }
 
     var isPaused by remember {
@@ -48,11 +53,60 @@ fun PersonsList() {
     }
 
     LaunchedEffect(key1 = timeLeft) {
-        while (timeLeft > 0 && !isPaused ) {
+        while (timeLeft > 0 && !isPaused) {
             delay(1000L)
-            timeLeft --
+            timeLeft--
+        }
+        onComplete()
+    }
+
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        modifier = Modifier
+            .fillMaxWidth()
+    ) {
+        Text(
+            text = "Time left: ${timeLeft.toString()}",
+            modifier = Modifier
+                .padding(16.dp),
+            fontSize = 20.sp
+        )
+        Spacer(modifier = Modifier.weight(1f))
+        Button(
+            modifier = Modifier.padding(16.dp),
+            onClick = {
+                isPaused = true
+                onPause()
+            }) {
+            Icon(
+                modifier = Modifier
+                    .size(20.dp),
+                imageVector = Icons.Default.Warning,
+                contentDescription = null
+            )
+        }
+        Button(
+            modifier = Modifier.padding(16.dp),
+            onClick = {
+                isPaused = false
+                timeLeft = duration
+                onReset()
+            }) {
+            Icon(
+                modifier = Modifier
+                    .size(20.dp),
+                imageVector = Icons.Default.Refresh,
+                contentDescription = null
+            )
         }
     }
+}
+
+@Composable
+fun RegistrationForm(
+    addPerson: (Person) -> Unit
+) {
+    val context = LocalContext.current
 
     var name by remember {
         mutableStateOf("")
@@ -62,53 +116,7 @@ fun PersonsList() {
         mutableStateOf("")
     }
 
-    var persons by remember {
-        mutableStateOf(listOf<Person>())
-    }
-
-    val context = LocalContext.current
-
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        Row (
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            Text(
-                text = "Time left: ${timeLeft.toString()}",
-                modifier = Modifier
-                    .padding(16.dp),
-                fontSize = 20.sp
-            )
-            Spacer(modifier = Modifier.weight(1f))
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                    isPaused = true
-                }) {
-                Icon(
-                    modifier = Modifier
-                        .size(20.dp),
-                    imageVector = Icons.Default.Warning,
-                    contentDescription = null
-                )
-            }
-            Button(
-                modifier = Modifier.padding(16.dp),
-                onClick = {
-                timeLeft = 10
-            }) {
-                Icon(
-                    modifier = Modifier
-                        .size(20.dp),
-                    imageVector = Icons.Default.Refresh,
-                    contentDescription = null
-                )
-            }
-        }
-
+    Column {
         TextField(value = name,
             modifier = Modifier
                 .fillMaxWidth()
@@ -137,8 +145,8 @@ fun PersonsList() {
             onClick = {
                 val intAge = age.toIntOrNull()
                 if (name.isNotBlank() && intAge != null) {
-                    persons = persons + Person(name = name, age = intAge)
-
+//                    persons = persons + Person(name = name, age = intAge)
+                    addPerson(Person(name = name, age = intAge))
                     name = ""
                     age = ""
                 } else {
@@ -153,7 +161,37 @@ fun PersonsList() {
                 imageVector = Icons.Default.Add, contentDescription = "icono de añadir"
             )
         }
+    }
+}
 
+@Composable
+fun PersonsList() {
+
+    var isFormEnabled by remember { mutableStateOf(true) }
+
+
+    var persons by remember {
+        mutableStateOf(listOf<Person>())
+    }
+
+
+    Column(
+        modifier = Modifier.fillMaxSize()
+    ) {
+
+        FormTimer(
+            duration = 20,
+            onReset = {
+                isFormEnabled = true
+            },
+            onComplete = {
+                isFormEnabled = false
+            }
+        )
+
+        RegistrationForm(addPerson = { capturedPerson ->
+            persons += capturedPerson
+        })
 
         LazyColumn {
             items(persons) { currentPerson ->
